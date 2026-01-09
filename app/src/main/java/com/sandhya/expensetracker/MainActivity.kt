@@ -10,23 +10,44 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.sandhya.expensetracker.Screen.AddExpense.route
+import com.sandhya.expensetracker.ui.screen.addexpense.AddExpenseScreen
+import com.sandhya.expensetracker.ui.screen.home.HomeScreen
 import com.sandhya.expensetracker.ui.theme.SmartExpenseTrackerAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val navController= rememberNavController()
+            NavHost(navController=navController, startDestination= Screen.Home.route){
+
+                composable(Screen.Home.route){
+                    HomeScreen(navController)
+                }
+                composable(Screen.AddExpense.route){
+                    AddExpenseScreen(navController)
+                }
+            }
             SmartExpenseTrackerAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    Greeting("Android ExpensetrackerApp")
                 }
             }
+
         }
     }
+}
+sealed class Screen(val route: String) {
+    object Home : Screen("home")
+    object AddExpense : Screen("add_expense")
 }
 
 @Composable

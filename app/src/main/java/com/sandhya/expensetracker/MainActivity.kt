@@ -22,35 +22,55 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navController= rememberNavController()
-            NavHost(navController=navController, startDestination= Screen.Home.route){
 
-                composable(Screen.Home.route){
+            val navController = rememberNavController()
+
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Home.route
+            ) {
+                composable(Screen.Home.route) {
                     HomeScreen(navController)
                 }
-                composable(Screen.AddExpense.route){
+                composable(Screen.AddExpense.route) {
                     AddExpenseScreen(navController)
                 }
             }
-            SmartExpenseTrackerAppTheme {
+
+           /* SmartExpenseTrackerAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android ExpensetrackerApp")
-                }
+                    //Greeting("Android ExpensetrackerApp")
+                    val navController = rememberNavController()
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.Home.route
+                    ) {
+                        composable(Screen.Home.route) {
+                            HomeScreen(navController)
+                        }
+                        composable(Screen.AddExpense.route) {
+                            AddExpenseScreen(navController)
+                        }
+                    }
+                    }
+                }*/
             }
 
         }
     }
-}
+//}
 sealed class Screen(val route: String) {
     object Home : Screen("home")
     object AddExpense : Screen("add_expense")
 }
 
-@Composable
+
+/*@Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
         text = "Hello $name!",
@@ -64,4 +84,4 @@ fun GreetingPreview() {
     SmartExpenseTrackerAppTheme {
         Greeting("Android")
     }
-}
+}*/

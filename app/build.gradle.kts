@@ -52,6 +52,8 @@ android {
 dependencies {
 
     implementation("androidx.navigation:navigation-compose:2.7.7") //added
+    implementation ("com.google.android.material:material:1.11.0") //added
+    implementation("androidx.compose.foundation:foundation-android:1.5.1")//added
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")

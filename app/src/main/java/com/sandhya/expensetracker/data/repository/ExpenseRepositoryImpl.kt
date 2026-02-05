@@ -23,6 +23,5 @@ class ExpenseRepositoryImpl( private val dao: ExpenseDao): ExpenseRepository
 
     override suspend fun getAllExpenses(): List<Expense> {
         return dao.getAllExpenses().map { it.toDomain() }
-        return emptyList();
     }
 }

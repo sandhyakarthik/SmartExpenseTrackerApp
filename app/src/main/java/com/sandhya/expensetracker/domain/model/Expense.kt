@@ -1,4 +1,4 @@
-package com.sandhya.expensetracker.ui.domain.model
+package com.sandhya.expensetracker.domain.model
 
 /**
  *Created by  Sandhya D on 1/15/2026.

@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id ("com.google.dagger.hilt.android")
 }
 
 android {
@@ -31,11 +32,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        //sourceCompatibility = JavaVersion.VERSION_1_8
+        //targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+       // jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -48,18 +52,21 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-}
 
+}
+kapt {
+    correctErrorTypes =true
+}//added
 dependencies {
 
     implementation("androidx.navigation:navigation-compose:2.7.7") //added
     implementation ("com.google.android.material:material:1.11.0") //added
     implementation("androidx.compose.foundation:foundation-android:1.5.1")//added
     implementation ("androidx.room:room-runtime:2.6.1")//added
-    //kapt "androidx.room:room-compiler:2.6.1"
-    //implementation("androidx.room:room-runtime:2.6.1")//added
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")//added
+    implementation("com.google.dagger:hilt-android:2.51")//added
+    kapt("com.google.dagger:hilt-compiler:2.51")//added
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -77,3 +84,4 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
+

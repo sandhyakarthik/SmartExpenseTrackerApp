@@ -1,6 +1,6 @@
-package com.sandhya.expensetracker.ui.domain.repository
+package com.sandhya.expensetracker.domain.repository
 
-import com.sandhya.expensetracker.ui.domain.model.Expense
+import com.sandhya.expensetracker.domain.model.Expense
 
 /**
  *Created by  Sandhya D on 1/15/2026.

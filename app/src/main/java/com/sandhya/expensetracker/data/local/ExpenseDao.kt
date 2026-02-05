@@ -1,4 +1,4 @@
-package com.sandhya.expensetracker.ui.data.local
+package com.sandhya.expensetracker.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -16,5 +16,5 @@ interface ExpenseDao {
     @Delete()
     suspend fun deleteExpense(expense: ExpenseEntity)
     @Query("SELECT * FROM expenses ORDER BY timestamp DESC")
-    suspend fun getAllExpense():List<ExpenseEntity>
+    suspend fun getAllExpenses():List<ExpenseEntity>
 }

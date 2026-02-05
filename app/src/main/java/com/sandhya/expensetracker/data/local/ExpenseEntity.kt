@@ -1,4 +1,4 @@
-package com.sandhya.expensetracker.ui.data.local
+package com.sandhya.expensetracker.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

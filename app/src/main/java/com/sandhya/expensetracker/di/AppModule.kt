@@ -6,6 +6,9 @@ import com.sandhya.expensetracker.data.local.ExpenseDao
 import com.sandhya.expensetracker.data.local.ExpenseDatabase
 import com.sandhya.expensetracker.data.repository.ExpenseRepositoryImpl
 import com.sandhya.expensetracker.domain.repository.ExpenseRepository
+import com.sandhya.expensetracker.domain.usecase.AddExpenseUseCase
+import com.sandhya.expensetracker.domain.usecase.DeleteExpenseUseCase
+import com.sandhya.expensetracker.domain.usecase.GetExpensesUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,4 +43,16 @@ object AppModule {
         dao: ExpenseDao
     ): ExpenseRepository =
         ExpenseRepositoryImpl(dao)
+
+    @Provides
+    fun provideAddExpenseUseCase(repo: ExpenseRepository) =
+        AddExpenseUseCase(repo)
+
+    @Provides
+    fun provideGetExpensesUseCase(repo: ExpenseRepository) =
+        GetExpensesUseCase(repo)
+
+    @Provides
+    fun provideDeleteExpenseUseCase(repo: ExpenseRepository) =
+        DeleteExpenseUseCase(repo)
 }

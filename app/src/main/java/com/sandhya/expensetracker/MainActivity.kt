@@ -17,7 +17,9 @@ import com.sandhya.expensetracker.Screen.AddExpense.route
 import com.sandhya.expensetracker.ui.screen.addexpense.AddExpenseScreen
 import com.sandhya.expensetracker.ui.screen.home.HomeScreen
 import com.sandhya.expensetracker.ui.theme.SmartExpenseTrackerAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

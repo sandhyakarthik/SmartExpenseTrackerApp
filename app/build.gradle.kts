@@ -67,6 +67,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")//added
     implementation("com.google.dagger:hilt-android:2.51")//added
     kapt("com.google.dagger:hilt-compiler:2.51")//added
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")//added
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")

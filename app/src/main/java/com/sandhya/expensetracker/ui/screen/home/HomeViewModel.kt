@@ -3,8 +3,10 @@ package com.sandhya.expensetracker.ui.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sandhya.expensetracker.domain.model.Expense
+import com.sandhya.expensetracker.domain.model.MonthlySummary
 import com.sandhya.expensetracker.domain.usecase.DeleteExpenseUseCase
 import com.sandhya.expensetracker.domain.usecase.GetExpensesUseCase
+import com.sandhya.expensetracker.domain.usecase.GetMonthlySummaryUseCase
 import com.sandhya.expensetracker.ui.state.ExpenseUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,11 +24,16 @@ import kotlinx.coroutines.withContext
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getExpenses: GetExpensesUseCase,
-    private val deleteExpense: DeleteExpenseUseCase
+    private val deleteExpense: DeleteExpenseUseCase,
+    private val getMonthlySummaryUseCase: GetMonthlySummaryUseCase // Added Use Case Injection
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ExpenseUiState>(ExpenseUiState.Loading)
     val uiState: StateFlow<ExpenseUiState> = _uiState
+
+    // Expose the monthly summary flow directly to the UI layer
+    // (Spelled 'summary' with an 'a' to perfectly match your Screen file)
+    val monthlySummary: Flow<MonthlySummary> = getMonthlySummaryUseCase()
 
     init {
         observeExpenses()

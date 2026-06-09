@@ -1,5 +1,6 @@
 package com.sandhya.expensetracker.data.repository
 
+import com.sandhya.expensetracker.data.local.CategorySummaryDto
 import com.sandhya.expensetracker.data.local.ExpenseDao
 import com.sandhya.expensetracker.data.local.MonthlySummaryDto
 import com.sandhya.expensetracker.domain.model.Expense
@@ -29,5 +30,9 @@ class ExpenseRepositoryImpl( private val dao: ExpenseDao): ExpenseRepository
 
     override fun getMonthlySummary(): Flow<MonthlySummaryDto> {
         return dao.getMonthlySummary()
+    }
+
+    override fun getCategorySummaries(): Flow<List<CategorySummaryDto>> {
+        return dao.getCategorySummaries()
     }
 }

@@ -2,9 +2,11 @@ package com.sandhya.expensetracker.ui.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sandhya.expensetracker.domain.model.CategorySummary
 import com.sandhya.expensetracker.domain.model.Expense
 import com.sandhya.expensetracker.domain.model.MonthlySummary
 import com.sandhya.expensetracker.domain.usecase.DeleteExpenseUseCase
+import com.sandhya.expensetracker.domain.usecase.GetCategorySummaryUseCase
 import com.sandhya.expensetracker.domain.usecase.GetExpensesUseCase
 import com.sandhya.expensetracker.domain.usecase.GetMonthlySummaryUseCase
 import com.sandhya.expensetracker.ui.state.ExpenseUiState
@@ -25,7 +27,8 @@ import kotlinx.coroutines.withContext
 class HomeViewModel @Inject constructor(
     private val getExpenses: GetExpensesUseCase,
     private val deleteExpense: DeleteExpenseUseCase,
-    private val getMonthlySummaryUseCase: GetMonthlySummaryUseCase // Added Use Case Injection
+    private val getMonthlySummaryUseCase: GetMonthlySummaryUseCase, // Added Use Case Injection
+    private val getCategorySummaryUseCase: GetCategorySummaryUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ExpenseUiState>(ExpenseUiState.Loading)
@@ -34,6 +37,7 @@ class HomeViewModel @Inject constructor(
     // Expose the monthly summary flow directly to the UI layer
     // (Spelled 'summary' with an 'a' to perfectly match your Screen file)
     val monthlySummary: Flow<MonthlySummary> = getMonthlySummaryUseCase()
+    val categorySummaries: Flow<List<CategorySummary>> = getCategorySummaryUseCase()
 
     init {
         observeExpenses()

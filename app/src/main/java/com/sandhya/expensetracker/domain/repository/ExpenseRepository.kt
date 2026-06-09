@@ -1,5 +1,6 @@
 package com.sandhya.expensetracker.domain.repository
 
+import com.sandhya.expensetracker.data.local.CategorySummaryDto
 import com.sandhya.expensetracker.data.local.MonthlySummaryDto
 import com.sandhya.expensetracker.domain.model.Expense
 import kotlinx.coroutines.flow.Flow
@@ -12,9 +13,5 @@ interface ExpenseRepository {
     suspend fun deleteExpense(expense: Expense)  // Must be suspend
     fun getAllExpenses(): Flow<List<Expense>>
     fun getMonthlySummary(): Flow<MonthlySummaryDto>
+    fun getCategorySummaries(): Flow<List<CategorySummaryDto>>
 }
-/*interface ExpenseRepository {
-    fun addExpense(expense : Expense)
-     fun deleteExpense(expense: Expense)
-     fun getAllExpenses() : Flow<List<Expense>>
-}*/

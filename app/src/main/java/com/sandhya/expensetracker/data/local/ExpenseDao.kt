@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 /**
  *Created by  Sandhya D on 1/15/2026.
@@ -12,9 +13,9 @@ import androidx.room.Query
 @Dao
 interface ExpenseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExpense(expense : ExpenseEntity)
+     fun insertExpense(expense : ExpenseEntity)
     @Delete()
-    suspend fun deleteExpense(expense: ExpenseEntity)
+     fun deleteExpense(expense: ExpenseEntity)
     @Query("SELECT * FROM expenses ORDER BY timestamp DESC")
-    suspend fun getAllExpenses():List<ExpenseEntity>
+     fun getAllExpenses(): Flow<List<ExpenseEntity>>
 }

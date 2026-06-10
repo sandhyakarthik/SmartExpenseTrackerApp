@@ -8,6 +8,7 @@ import com.sandhya.expensetracker.data.repository.ExpenseRepositoryImpl
 import com.sandhya.expensetracker.domain.repository.ExpenseRepository
 import com.sandhya.expensetracker.domain.usecase.AddExpenseUseCase
 import com.sandhya.expensetracker.domain.usecase.DeleteExpenseUseCase
+import com.sandhya.expensetracker.domain.usecase.GetCategorySummaryUseCase
 import com.sandhya.expensetracker.domain.usecase.GetExpensesUseCase
 import com.sandhya.expensetracker.domain.usecase.GetMonthlySummaryUseCase
 import dagger.Module
@@ -62,5 +63,12 @@ object AppModule {
         repository: ExpenseRepository
     ): GetMonthlySummaryUseCase {
         return GetMonthlySummaryUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetCategorySummaryUseCase(
+        repository: ExpenseRepository
+    ): GetCategorySummaryUseCase {
+        return GetCategorySummaryUseCase(repository)
     }
 }

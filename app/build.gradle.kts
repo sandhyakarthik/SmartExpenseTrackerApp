@@ -68,6 +68,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51")//added
     kapt("com.google.dagger:hilt-compiler:2.51")//added
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")//added
+    // Ensure you are using a recent version of Material 3
+    implementation("androidx.compose.material3:material3:1.2.1")//added
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")

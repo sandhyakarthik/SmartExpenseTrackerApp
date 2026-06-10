@@ -33,6 +33,10 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.animation.animateColorAsState // Required for background color transitions
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * Created by Sandhya D on 1/9/2026.
@@ -40,7 +44,8 @@ import androidx.compose.animation.animateColorAsState // Required for background
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(navController: NavController,
+               viewModel: HomeViewModel = hiltViewModel()) {
 
     val state by viewModel.uiState.collectAsState()
     val summary by viewModel.monthlySummary.collectAsState(initial = MonthlySummary(0.0, 0))
@@ -67,10 +72,21 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
                 }
 
                 is ExpenseUiState.Empty -> {
-                    Text(
-                        text = "No expenses yet",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                       /* Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add new expense"
+                        )*/
+                        // Applied bodyLarge styling for an elegant fallback layout state
+                        Text("No expenses yet", style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("Tap + to add your first expense", style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+
+                    }
                 }
 
                 is ExpenseUiState.Success -> {
@@ -99,17 +115,19 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
                                     Text(
                                         text = "This Month",
                                         style = MaterialTheme.typography.labelLarge,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                                     )
+                                    // IMPROVED TYPOGRAPHY: Big, bold total display using headlineMedium
                                     Text(
                                         text = "$${String.format("%.2f", summary.totalSpent)}",
                                         style = MaterialTheme.typography.headlineMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
+                                    // IMPROVED TYPOGRAPHY: Supporting detail using bodyLarge
                                     Text(
                                         text = "${summary.totalTransactions} Transactions",
-                                        style = MaterialTheme.typography.bodyMedium,
+                                        style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                                     )
                                 }
@@ -119,11 +137,13 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
                         // 2. Category Section Header
                         if (categories.isNotEmpty()) {
                             item {
+                                // IMPROVED TYPOGRAPHY: Group sections styled via titleLarge
                                 Text(
                                     text = "Spending by Category",
-                                    style = MaterialTheme.typography.titleSmall,
-                                    modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
-                                    color = MaterialTheme.colorScheme.outline
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(start = 16.dp,top = 8.dp, bottom = 12.dp),
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
 
@@ -135,11 +155,13 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
 
                         // 4. Recent Transactions Section Header
                         item {
+                            // IMPROVED TYPOGRAPHY: Primary content headings styled via titleLarge
                             Text(
                                 text = "Recent Transactions",
-                                style = MaterialTheme.typography.titleSmall,
-                                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 12.dp),
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -160,6 +182,13 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
                             SwipeToDismissBox(
                                 state = dismissState,
                                 enableDismissFromStartToEnd = false, // Drag right-to-left only
+                                // Animated Swipe-to-Delete Transaction Items
+                                modifier = Modifier
+                                    .animateItem(
+                                        fadeInSpec = tween(durationMillis = 300),
+                                        fadeOutSpec = tween(durationMillis = 300),
+                                        placementSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                                    ),
                                 backgroundContent = {
                                     val backgroundColor by animateColorAsState(
                                         targetValue = when (dismissState.targetValue) {
@@ -196,8 +225,10 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
 
                 is ExpenseUiState.Error -> {
                     val errorMessage = (state as ExpenseUiState.Error).message ?: "Something went wrong"
+                    // IMPROVED TYPOGRAPHY: Clear errors explicitly mapped to bodyLarge bounds
                     Text(
                         text = errorMessage,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.error
                     )
                 }

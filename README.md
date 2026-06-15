@@ -119,14 +119,14 @@ SQLite Storage
 
 ### Add Expense Screen
 <p align="center">
-         <a href="./screenshots/home.jpg">
+         <a href="./screenshots/add.jpg">
             <img src="./screenshots/add.jpg" alt="App Screenshot" width="500">
          </a>
 </p>
 
 ### Expense History Screen
 <p align="center">
-         <a href="./screenshots/home.jpg">
+         <a href="./screenshots/expenses.jpg">
             <img src="./screenshots/expenses.jpg" alt="App Screenshot" width="500">
          </a>
 </p>

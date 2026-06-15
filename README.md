@@ -111,11 +111,7 @@ SQLite Storage
 ## 📸 Screenshots
 
 ### Home Screen
-<p align="center">
-        <a href="./screenshots/home.jpg">
-          <img src="./screenshots/home.jpg" alt="App Screenshot" width="500">
-        </a>
-</p>
+![App Screenshot](screenshots/home.jpg)
 
 ### Add Expense Screen
 <p align="center">

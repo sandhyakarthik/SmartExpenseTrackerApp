@@ -112,17 +112,17 @@ SQLite Storage
 
 ### Home Screen
 <p align="center">
-  <img src="screenshots/home.jpg" alt="App Screenshot" width="500">
+  <img src="./screenshots/home.jpg" alt="App Screenshot" width="500">
 </p>
 
 ### Add Expense Screen
 <p align="center">
-  <img src="screenshots/add.jpg" alt="App Screenshot" width="500">
+  <img src="./screenshots/add.jpg" alt="App Screenshot" width="500">
 </p>
 
 ### Expense History Screen
 <p align="center">
-  <img src="screenshots/expenses.jpg" alt="App Screenshot" width="500">
+  <img src="./screenshots/expenses.jpg" alt="App Screenshot" width="500">
 </p>
 
 ---

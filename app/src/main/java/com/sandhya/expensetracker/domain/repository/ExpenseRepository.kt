@@ -17,5 +17,8 @@ interface ExpenseRepository {
     fun getMonthlySummary(): Flow<MonthlySummaryDto>
     fun getTotalSummary(): Flow<MonthlySummaryDto>
     fun getCategorySummaries(): Flow<List<CategorySummaryDto>>
+    // Existing functions...
+    fun getCategorySummariesByDate(startTimestamp: Long, endTimestamp: Long): Flow<List<CategorySummaryDto>>
+    fun getDefaultMonthlyCategorySummaries(): Flow<List<CategorySummaryDto>>
     fun getMonthlyCategorySummaries(): Flow<List<CategorySummaryDto>>
 }

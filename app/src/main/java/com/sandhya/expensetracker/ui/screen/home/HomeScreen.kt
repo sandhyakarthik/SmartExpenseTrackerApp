@@ -135,7 +135,7 @@ fun HomeScreen(
                             modifier = Modifier.fillMaxSize()
                         ) {
                             // 1. Category Section Header
-                            if (categories.isNotEmpty()) {
+                           /* if (categories.isNotEmpty()) {
                                 item {
                                     Text(
                                         text = "Spending by Category",
@@ -150,7 +150,7 @@ fun HomeScreen(
                                 items(categories, key = { category -> "cat_${category.category}" }) { categorySummary ->
                                     CategorySummaryItem(categorySummary = categorySummary)
                                 }
-                            }
+                            }*/
 
                             // 3. Recent Transactions Section Header
                             item {

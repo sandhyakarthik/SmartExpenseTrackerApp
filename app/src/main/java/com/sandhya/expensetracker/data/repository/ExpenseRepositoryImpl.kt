@@ -45,6 +45,14 @@ class ExpenseRepositoryImpl(private val dao: ExpenseDao) : ExpenseRepository {
         return dao.getCategorySummaries()
     }
 
+   override fun getCategorySummariesByDate(startTimestamp: Long, endTimestamp: Long): Flow<List<CategorySummaryDto>> {
+       return dao.getCategorySummariesByDate(startTimestamp, endTimestamp)
+   }
+
+    override fun getDefaultMonthlyCategorySummaries(): Flow<List<CategorySummaryDto>> {
+        return dao.getMonthlyCategorySummaries() // Maps to your current-month DAO query
+    }
+
     override fun getMonthlyCategorySummaries(): Flow<List<CategorySummaryDto>> {
         return dao.getMonthlyCategorySummaries()
     }

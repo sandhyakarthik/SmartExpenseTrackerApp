@@ -22,6 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,14 +35,30 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sandhya.expensetracker.domain.model.CategorySummary
 import com.sandhya.expensetracker.ui.component.ExpenseTopAppBar
 import java.util.Locale
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import com.sandhya.expensetracker.ui.component.ReportDateRangePickerDialog
+import java.text.SimpleDateFormat
+import java.util.Date
 
 /**
  * Created by Sandhya D on 2/6/2026.
  */
+
 @Composable
 fun ReportsScreen(
     viewModel: ReportsViewModel = hiltViewModel()
 ) {
+    var showDatePicker by remember { mutableStateOf(false) }
+    var selectedDateRangeText by remember { mutableStateOf("June 2026") }
+
     val summaries by viewModel.monthlyCategorySummaries.collectAsState()
     val totalAmount = summaries.sumOf { it.totalAmount }
 
@@ -58,7 +77,19 @@ fun ReportsScreen(
                 thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
-
+            // Place this right underneath your summary cards to match the design:
+            InputChip(
+                selected = true,
+                onClick = { showDatePicker = true },
+                label = { Text(text = "Date Range: $selectedDateRangeText") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select Dates"
+                    )
+                },
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
             if (summaries.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "No data for this month", style = MaterialTheme.typography.bodyLarge)
@@ -77,6 +108,25 @@ fun ReportsScreen(
                 }
             }
         }
+    }
+    // Handle displaying the dialog overlay conditionally
+    if (showDatePicker) {
+        ReportDateRangePickerDialog(
+            onDismiss = { showDatePicker = false },
+            onDateRangeSelected = { startTimestamp, endTimestamp ->
+                if (startTimestamp != null && endTimestamp != null) {
+                    val formatter = SimpleDateFormat("MMM d", Locale.getDefault()).apply {
+                        timeZone = java.util.TimeZone.getTimeZone("UTC")
+                    }
+                    val start = formatter.format(Date(startTimestamp))
+                    val end = formatter.format(Date(endTimestamp))
+                    selectedDateRangeText = "$start—$end, 2026"
+
+                    // TODO: Pass timestamps to your ViewModel to update your Room query!
+                     viewModel.updateDateFilter(startTimestamp, endTimestamp)
+                }
+            }
+        )
     }
 }
 

@@ -126,7 +126,9 @@ fun ExpenseItem(
 
 private fun formatDate(timestamp: Long): String {
     val date = Date(timestamp)
-    val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+    val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).apply {
+        timeZone = java.util.TimeZone.getTimeZone("UTC")
+    }
     return formatter.format(date)
 }
 

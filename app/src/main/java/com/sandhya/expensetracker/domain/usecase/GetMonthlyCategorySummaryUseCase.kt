@@ -12,9 +12,22 @@ import javax.inject.Inject
 class GetMonthlyCategorySummaryUseCase @Inject constructor(
     private val repository: ExpenseRepository
 ) {
-    operator fun invoke(): Flow<List<CategorySummary>> {
-        return repository.getMonthlyCategorySummaries().map { list ->
-            list.map { CategorySummary(it.category, it.totalAmount) }
+    operator fun invoke(startTimestamp: Long? = null,
+                        endTimestamp: Long? = null): Flow<List<CategorySummary>>
+    {
+       /* return repository.getMonthlyCategorySummaries().map { list ->
+            list.map { CategorySummary(it.category, it.totalAmount)
+            }
+        }*/
+        val flow = if (startTimestamp != null && endTimestamp != null) {
+            repository.getCategorySummariesByDate(startTimestamp, endTimestamp)
+        } else {
+            repository.getDefaultMonthlyCategorySummaries()
+        }
+
+        // Map your database DTO to your clean UI Domain Model if needed
+        return flow.map { dtoList ->
+            dtoList.map { CategorySummary(category = it.category, totalAmount = it.totalAmount) }
         }
     }
 }

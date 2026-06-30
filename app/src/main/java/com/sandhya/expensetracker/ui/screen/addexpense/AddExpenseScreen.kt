@@ -72,12 +72,24 @@ fun AddExpenseScreen(navController: NavController) {
 
     // Date Picker State
     var showDatePicker by remember { mutableStateOf(false) }
-    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = System.currentTimeMillis())
+    
+    // Aligns the initial date to the start of the day in UTC to match DatePicker's behavior
+    val initialDate = remember {
+        val calendar = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"))
+        calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        calendar.set(java.util.Calendar.MINUTE, 0)
+        calendar.set(java.util.Calendar.SECOND, 0)
+        calendar.set(java.util.Calendar.MILLISECOND, 0)
+        calendar.timeInMillis
+    }
+    
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialDate)
     val selectedDateFormatted = remember {
         derivedStateOf {
             val date = datePickerState.selectedDateMillis?.let { Date(it) } ?: Date()
-            SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).apply { timeZone = java.util.TimeZone.getTimeZone("UTC") }.format(date)
-
+            SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).apply { 
+                timeZone = java.util.TimeZone.getTimeZone("UTC") 
+            }.format(date)
         }
     }
 

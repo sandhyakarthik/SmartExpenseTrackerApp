@@ -38,7 +38,21 @@ interface ExpenseDao {
 
     @Query("SELECT category, TOTAL(amount) as totalAmount FROM expenses WHERE strftime('%m', datetime(timeStamp/1000, 'unixepoch')) = strftime('%m', 'now') AND strftime('%Y', datetime(timeStamp/1000, 'unixepoch')) = strftime('%Y', 'now') GROUP BY category ORDER BY totalAmount DESC")
     fun getMonthlyCategorySummaries(): Flow<List<CategorySummaryDto>>
+
+    // ─── ADDED FOR THE DATE RANGE PICKER ───
+    /**
+     * Fetches category summary aggregates filtered dynamically between two millisecond timestamps.
+     */
+    @Query("""
+        SELECT category, TOTAL(amount) as totalAmount 
+        FROM expenses 
+        WHERE timeStamp >= :startTimestamp AND timeStamp <= :endTimestamp 
+        GROUP BY category 
+        ORDER BY totalAmount DESC
+    """)
+    fun getCategorySummariesByDate(startTimestamp: Long, endTimestamp: Long): Flow<List<CategorySummaryDto>>
 }
+
 /**
  * Data holder class for Room to map the aggregate query results into.
  */

@@ -5,29 +5,39 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 /**
- *Created by  Sandhya D on 1/15/2026.
+ * Created by Sandhya D on 1/15/2026.
  */
 @Dao
 interface ExpenseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-     fun insertExpense(expense : ExpenseEntity)
+    suspend fun insertExpense(expense: ExpenseEntity)
 
-    @Delete()
-     fun deleteExpense(expense: ExpenseEntity)
+    @Delete
+    suspend fun deleteExpense(expense: ExpenseEntity)
 
-    @Query("SELECT * FROM expenses ORDER BY timestamp DESC")
-     fun getAllExpenses(): Flow<List<ExpenseEntity>>
+    @Query("SELECT * FROM expenses ORDER BY timeStamp DESC")
+    fun getAllExpenses(): Flow<List<ExpenseEntity>>
+
+    @Transaction
+    @Query("SELECT * FROM expenses ORDER BY timeStamp DESC")
+    fun getAllExpensesWithCategory(): Flow<List<ExpenseWithCategory>>
 
     // Combined aggregate query (Fixed table name to match 'expenses')
     @Query("SELECT TOTAL(amount) as totalSpent, COUNT(*) as totalTransactions FROM expenses")
+    fun getTotalSummary(): Flow<MonthlySummaryDto>
+
+    @Query("SELECT TOTAL(amount) as totalSpent, COUNT(*) as totalTransactions FROM expenses WHERE strftime('%m', datetime(timeStamp/1000, 'unixepoch')) = strftime('%m', 'now') AND strftime('%Y', datetime(timeStamp/1000, 'unixepoch')) = strftime('%Y', 'now')")
     fun getMonthlySummary(): Flow<MonthlySummaryDto>
-    // Note: You can also add a WHERE clause here later to filter by the current month!
 
     @Query("SELECT category, TOTAL(amount) as totalAmount FROM expenses GROUP BY category ORDER BY totalAmount DESC")
     fun getCategorySummaries(): Flow<List<CategorySummaryDto>>
+
+    @Query("SELECT category, TOTAL(amount) as totalAmount FROM expenses WHERE strftime('%m', datetime(timeStamp/1000, 'unixepoch')) = strftime('%m', 'now') AND strftime('%Y', datetime(timeStamp/1000, 'unixepoch')) = strftime('%Y', 'now') GROUP BY category ORDER BY totalAmount DESC")
+    fun getMonthlyCategorySummaries(): Flow<List<CategorySummaryDto>>
 }
 /**
  * Data holder class for Room to map the aggregate query results into.

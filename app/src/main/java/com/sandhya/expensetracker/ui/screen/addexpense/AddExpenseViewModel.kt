@@ -2,12 +2,15 @@ package com.sandhya.expensetracker.ui.screen.addexpense
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sandhya.expensetracker.data.local.CategoryEntity
 import com.sandhya.expensetracker.domain.model.Expense
 import com.sandhya.expensetracker.domain.usecase.AddExpenseUseCase
+import com.sandhya.expensetracker.domain.usecase.GetCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -15,21 +18,31 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AddExpenseViewModel @Inject constructor(
-    private val addExpense: AddExpenseUseCase
+    private val addExpense: AddExpenseUseCase,
+    getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
 
+    val categories: StateFlow<List<CategoryEntity>> = getCategoriesUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
     // In your AddExpenseViewModel.kt
-    fun save(amount: Double, category: String, note: String) {
+    fun save(amount: Double, category: CategoryEntity, note: String, timestamp: Long = System.currentTimeMillis()) {
         viewModelScope.launch {
             try {
-                // Force the database execution context over to a background IO thread
-                withContext(Dispatchers.IO) {
-                    //addExpenseUseCase(amount, category, note)
-                    addExpense(Expense(amount = amount, category = category, note = note, timeStamp = System.currentTimeMillis()))
-
-                }
+                addExpense(
+                    Expense(
+                        amount = amount,
+                        category = category.name,
+                        categoryId = category.id,
+                        note = note,
+                        timeStamp = timestamp
+                    )
+                )
             } catch (e: Exception) {
-                // Handle any unexpected errors gracefully
                 e.printStackTrace()
             }
         }

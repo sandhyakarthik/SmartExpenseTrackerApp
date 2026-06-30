@@ -1,42 +1,50 @@
 package com.sandhya.expensetracker.ui.screen.home
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.sandhya.expensetracker.Screen
 import com.sandhya.expensetracker.domain.model.MonthlySummary
 import com.sandhya.expensetracker.ui.component.CategorySummaryItem
 import com.sandhya.expensetracker.ui.component.ExpenseItem
+import com.sandhya.expensetracker.ui.component.ExpenseTopAppBar
+import com.sandhya.expensetracker.ui.component.SummaryCards
 import com.sandhya.expensetracker.ui.state.ExpenseUiState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.rememberSwipeToDismissBoxState
-import androidx.compose.animation.animateColorAsState // Required for background color transitions
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * Created by Sandhya D on 1/9/2026.
@@ -44,13 +52,18 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController,
-               viewModel: HomeViewModel = hiltViewModel()) {
-
+fun HomeScreen(
+    navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
     val state by viewModel.uiState.collectAsState()
-    val summary by viewModel.monthlySummary.collectAsState(initial = MonthlySummary(0.0, 0))
+    val monthlySummary by viewModel.monthlySummary.collectAsState(initial = MonthlySummary(0.0, 0))
+    val totalSummary by viewModel.totalSummary.collectAsState(initial = MonthlySummary(0.0, 0))
 
     Scaffold(
+        topBar = {
+            ExpenseTopAppBar(title = "SmartExpenseTracker")
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(Screen.AddExpense.route) }
@@ -60,177 +73,159 @@ fun HomeScreen(navController: NavController,
         }
     ) { padding ->
 
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            contentAlignment = Alignment.Center
+                .padding(padding)
         ) {
-            when (state) {
-                is ExpenseUiState.Loading -> {
-                    CircularProgressIndicator()
-                }
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
 
-                is ExpenseUiState.Empty -> {
+            // Dashboard Summary Cards
+            SummaryCards(
+                totalSpent = totalSummary.totalSpent,
+                monthlySpent = monthlySummary.totalSpent
+            )
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                       /* Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add new expense"
-                        )*/
-                        // Applied bodyLarge styling for an elegant fallback layout state
-                        Text("No expenses yet", style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Tap + to add your first expense", style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
-
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                when (state) {
+                    is ExpenseUiState.Loading -> {
+                        CircularProgressIndicator()
                     }
-                }
 
-                is ExpenseUiState.Success -> {
-                    val expenses = (state as ExpenseUiState.Success).expenses
-                    val categories by viewModel.categorySummaries.collectAsState(initial = emptyList())
+                    is ExpenseUiState.Empty -> {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "💰",
+                                style = MaterialTheme.typography.displayMedium
+                            )
 
-                    // Combined everything into one LazyColumn for a smoother scrolling experience
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        // 1. Monthly Summary Card
-                        item {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                                )
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(16.dp),
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
+                            Text(
+                                text = "No expenses yet",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Start tracking your spending\nto build better financial habits.",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    is ExpenseUiState.Success -> {
+                        val expenses = (state as ExpenseUiState.Success).expenses
+                        val categories by viewModel.categorySummaries.collectAsState(initial = emptyList())
+
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            // 1. Category Section Header
+                           /* if (categories.isNotEmpty()) {
+                                item {
                                     Text(
-                                        text = "This Month",
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    )
-                                    // IMPROVED TYPOGRAPHY: Big, bold total display using headlineMedium
-                                    Text(
-                                        text = "$${String.format("%.2f", summary.totalSpent)}",
-                                        style = MaterialTheme.typography.headlineMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                    // IMPROVED TYPOGRAPHY: Supporting detail using bodyLarge
-                                    Text(
-                                        text = "${summary.totalTransactions} Transactions",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                        text = "Spending by Category",
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.SemiBold,
+                                        modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 12.dp),
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
-                            }
-                        }
 
-                        // 2. Category Section Header
-                        if (categories.isNotEmpty()) {
+                                // 2. Category Cards
+                                items(categories, key = { category -> "cat_${category.category}" }) { categorySummary ->
+                                    CategorySummaryItem(categorySummary = categorySummary)
+                                }
+                            }*/
+
+                            // 3. Recent Transactions Section Header
                             item {
-                                // IMPROVED TYPOGRAPHY: Group sections styled via titleLarge
                                 Text(
-                                    text = "Spending by Category",
+                                    text = "Recent Expenses",
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier.padding(start = 16.dp,top = 8.dp, bottom = 12.dp),
+                                    modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 12.dp),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
 
-                            // 3. Category Cards
-                            items(categories, key = { category -> "cat_${category.category}" }) { categorySummary ->
-                                CategorySummaryItem(categorySummary = categorySummary)
-                            }
-                        }
-
-                        // 4. Recent Transactions Section Header
-                        item {
-                            // IMPROVED TYPOGRAPHY: Primary content headings styled via titleLarge
-                            Text(
-                                text = "Recent Transactions",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 12.dp),
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-
-                        // 5. Swipe-to-Delete Transaction Items
-                        items(expenses, key = { expense -> expense.id }) { expense ->
-
-                            val dismissState = rememberSwipeToDismissBoxState(
-                                confirmValueChange = { dismissValue ->
-                                    if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
-                                        viewModel.delete(expense)
-                                        true
-                                    } else {
-                                        false
+                            // 4. Swipe-to-Delete Transaction Items
+                            items(expenses, key = { expense -> expense.id }) { expense ->
+                                val dismissState = rememberSwipeToDismissBoxState(
+                                    confirmValueChange = { dismissValue ->
+                                        if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                                            viewModel.delete(expense)
+                                            true
+                                        } else {
+                                            false
+                                        }
                                     }
-                                }
-                            )
+                                )
 
-                            SwipeToDismissBox(
-                                state = dismissState,
-                                enableDismissFromStartToEnd = false, // Drag right-to-left only
-                                // Animated Swipe-to-Delete Transaction Items
-                                modifier = Modifier
-                                    .animateItem(
+                                SwipeToDismissBox(
+                                    state = dismissState,
+                                    enableDismissFromStartToEnd = false,
+                                    modifier = Modifier.animateItem(
                                         fadeInSpec = tween(durationMillis = 300),
                                         fadeOutSpec = tween(durationMillis = 300),
                                         placementSpec = spring(stiffness = Spring.StiffnessMediumLow)
                                     ),
-                                backgroundContent = {
-                                    val backgroundColor by animateColorAsState(
-                                        targetValue = when (dismissState.targetValue) {
-                                            SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.errorContainer
-                                            else -> MaterialTheme.colorScheme.surface
-                                        },
-                                        label = "DismissBackground"
-                                    )
+                                    backgroundContent = {
+                                        val backgroundColor by animateColorAsState(
+                                            targetValue = when (dismissState.targetValue) {
+                                                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.errorContainer
+                                                else -> MaterialTheme.colorScheme.surface
+                                            },
+                                            label = "DismissBackground"
+                                        )
 
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .background(backgroundColor)
-                                            .padding(horizontal = 24.dp),
-                                        contentAlignment = Alignment.CenterEnd
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = "Delete Expense",
-                                            tint = MaterialTheme.colorScheme.onErrorContainer
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(backgroundColor)
+                                                .padding(horizontal = 24.dp),
+                                            contentAlignment = Alignment.CenterEnd
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = "Delete Expense",
+                                                tint = MaterialTheme.colorScheme.onErrorContainer
+                                            )
+                                        }
+                                    },
+                                    content = {
+                                        ExpenseItem(
+                                            expense = expense,
+                                            onDelete = { viewModel.delete(expense) }
                                         )
                                     }
-                                },
-                                content = {
-                                    ExpenseItem(
-                                        expense = expense,
-                                        onDelete = { viewModel.delete(expense) }
-                                    )
-                                }
-                            )
+                                )
+                            }
                         }
                     }
-                }
 
-                is ExpenseUiState.Error -> {
-                    val errorMessage = (state as ExpenseUiState.Error).message ?: "Something went wrong"
-                    // IMPROVED TYPOGRAPHY: Clear errors explicitly mapped to bodyLarge bounds
-                    Text(
-                        text = errorMessage,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.error
-                    )
+                    is ExpenseUiState.Error -> {
+                        val errorMessage = (state as ExpenseUiState.Error).message
+                        Text(
+                            text = errorMessage,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
         }

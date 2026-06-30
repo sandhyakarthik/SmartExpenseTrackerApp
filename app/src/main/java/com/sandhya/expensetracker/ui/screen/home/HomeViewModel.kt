@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sandhya.expensetracker.domain.model.CategorySummary
 import com.sandhya.expensetracker.domain.model.Expense
+import com.sandhya.expensetracker.domain.model.ExpenseDetail
 import com.sandhya.expensetracker.domain.model.MonthlySummary
 import com.sandhya.expensetracker.domain.usecase.DeleteExpenseUseCase
 import com.sandhya.expensetracker.domain.usecase.GetCategorySummaryUseCase
 import com.sandhya.expensetracker.domain.usecase.GetExpensesUseCase
+import com.sandhya.expensetracker.domain.usecase.GetExpensesWithCategoryUseCase
 import com.sandhya.expensetracker.domain.usecase.GetMonthlySummaryUseCase
+import com.sandhya.expensetracker.domain.usecase.GetTotalSummaryUseCase
 import com.sandhya.expensetracker.ui.state.ExpenseUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -26,17 +29,18 @@ import kotlinx.coroutines.withContext
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getExpenses: GetExpensesUseCase,
+    private val getExpensesWithCategory: GetExpensesWithCategoryUseCase,
     private val deleteExpense: DeleteExpenseUseCase,
-    private val getMonthlySummaryUseCase: GetMonthlySummaryUseCase, // Added Use Case Injection
+    private val getMonthlySummaryUseCase: GetMonthlySummaryUseCase,
+    private val getTotalSummaryUseCase: GetTotalSummaryUseCase,
     private val getCategorySummaryUseCase: GetCategorySummaryUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ExpenseUiState>(ExpenseUiState.Loading)
     val uiState: StateFlow<ExpenseUiState> = _uiState
 
-    // Expose the monthly summary flow directly to the UI layer
-    // (Spelled 'summary' with an 'a' to perfectly match your Screen file)
     val monthlySummary: Flow<MonthlySummary> = getMonthlySummaryUseCase()
+    val totalSummary: Flow<MonthlySummary> = getTotalSummaryUseCase()
     val categorySummaries: Flow<List<CategorySummary>> = getCategorySummaryUseCase()
 
     init {
@@ -48,7 +52,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 // 2. Now you can safely call and collect the Flow stream
-                getExpenses().collect { expenses ->
+                getExpensesWithCategory().collect { expenses ->
                     _uiState.value = if (expenses.isEmpty()) {
                         ExpenseUiState.Empty
                     } else {
@@ -61,12 +65,19 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun delete(expense: Expense) {
+    fun delete(expense: ExpenseDetail) {
         viewModelScope.launch {
             try {
                 // Offload the database delete operation to the background thread
                 withContext(Dispatchers.IO) {
-                    deleteExpense(expense)
+                    val domainExpense = Expense(
+                        id = expense.id,
+                        amount = expense.amount,
+                        category = expense.categoryName,
+                        note = expense.note,
+                        timeStamp = expense.timeStamp
+                    )
+                    deleteExpense(domainExpense)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

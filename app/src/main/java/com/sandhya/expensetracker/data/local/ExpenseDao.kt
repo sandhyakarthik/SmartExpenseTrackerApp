@@ -33,10 +33,10 @@ interface ExpenseDao {
     @Query("SELECT TOTAL(amount) as totalSpent, COUNT(*) as totalTransactions FROM expenses WHERE strftime('%m', datetime(timeStamp/1000, 'unixepoch')) = strftime('%m', 'now') AND strftime('%Y', datetime(timeStamp/1000, 'unixepoch')) = strftime('%Y', 'now')")
     fun getMonthlySummary(): Flow<MonthlySummaryDto>
 
-    @Query("SELECT category, TOTAL(amount) as totalAmount FROM expenses GROUP BY category ORDER BY totalAmount DESC")
+    @Query("SELECT category, TOTAL(amount) as totalAmount, COUNT(*) as transactionCount FROM expenses GROUP BY category ORDER BY totalAmount DESC")
     fun getCategorySummaries(): Flow<List<CategorySummaryDto>>
 
-    @Query("SELECT category, TOTAL(amount) as totalAmount FROM expenses WHERE strftime('%m', datetime(timeStamp/1000, 'unixepoch')) = strftime('%m', 'now') AND strftime('%Y', datetime(timeStamp/1000, 'unixepoch')) = strftime('%Y', 'now') GROUP BY category ORDER BY totalAmount DESC")
+    @Query("SELECT category, TOTAL(amount) as totalAmount, COUNT(*) as transactionCount FROM expenses WHERE strftime('%m', datetime(timeStamp/1000, 'unixepoch')) = strftime('%m', 'now') AND strftime('%Y', datetime(timeStamp/1000, 'unixepoch')) = strftime('%Y', 'now') GROUP BY category ORDER BY totalAmount DESC")
     fun getMonthlyCategorySummaries(): Flow<List<CategorySummaryDto>>
 
     // ─── ADDED FOR THE DATE RANGE PICKER ───
@@ -44,13 +44,16 @@ interface ExpenseDao {
      * Fetches category summary aggregates filtered dynamically between two millisecond timestamps.
      */
     @Query("""
-        SELECT category, TOTAL(amount) as totalAmount 
+        SELECT category, TOTAL(amount) as totalAmount, COUNT(*) as transactionCount
         FROM expenses 
         WHERE timeStamp >= :startTimestamp AND timeStamp <= :endTimestamp 
         GROUP BY category 
         ORDER BY totalAmount DESC
     """)
     fun getCategorySummariesByDate(startTimestamp: Long, endTimestamp: Long): Flow<List<CategorySummaryDto>>
+
+    @Query("SELECT TOTAL(amount) FROM expenses WHERE timeStamp >= :start AND timeStamp <= :end")
+    fun getTotalSpentInRange(start: Long, end: Long): Flow<Double?>
 }
 
 /**
@@ -63,5 +66,6 @@ data class MonthlySummaryDto(
 // Data Transfer Object for Room mapping
 data class CategorySummaryDto(
     val category: String,
-    val totalAmount: Double
+    val totalAmount: Double,
+    val transactionCount: Int
 )

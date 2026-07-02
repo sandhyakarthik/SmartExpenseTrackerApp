@@ -56,4 +56,8 @@ class ExpenseRepositoryImpl(private val dao: ExpenseDao) : ExpenseRepository {
     override fun getMonthlyCategorySummaries(): Flow<List<CategorySummaryDto>> {
         return dao.getMonthlyCategorySummaries()
     }
+
+    override fun getTotalSpentInRange(start: Long, end: Long): Flow<Double> {
+        return dao.getTotalSpentInRange(start, end).map { it ?: 0.0 }
+    }
 }

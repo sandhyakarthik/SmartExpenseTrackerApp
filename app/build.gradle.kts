@@ -67,6 +67,8 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")//added
     // Ensure you are using a recent version of Material 3
     implementation("androidx.compose.material3:material3:1.2.1")//added
+    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")

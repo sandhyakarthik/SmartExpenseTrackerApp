@@ -21,4 +21,5 @@ interface ExpenseRepository {
     fun getCategorySummariesByDate(startTimestamp: Long, endTimestamp: Long): Flow<List<CategorySummaryDto>>
     fun getDefaultMonthlyCategorySummaries(): Flow<List<CategorySummaryDto>>
     fun getMonthlyCategorySummaries(): Flow<List<CategorySummaryDto>>
+    fun getTotalSpentInRange(start: Long, end: Long): Flow<Double>
 }

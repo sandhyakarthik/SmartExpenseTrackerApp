@@ -27,7 +27,7 @@ class GetMonthlyCategorySummaryUseCase @Inject constructor(
 
         // Map your database DTO to your clean UI Domain Model if needed
         return flow.map { dtoList ->
-            dtoList.map { CategorySummary(category = it.category, totalAmount = it.totalAmount) }
+            dtoList.map { CategorySummary(category = it.category, totalAmount = it.totalAmount, transactionCount = it.transactionCount) }
         }
     }
 }

@@ -132,16 +132,3 @@ private fun formatDate(timestamp: Long): String {
     return formatter.format(date)
 }
 
-private fun getCategoryEmoji(category: String): String {
-    return when (category) {
-        "Food & Drinks" -> "🍔"
-        "Transportation" -> "🚗"
-        "Shopping" -> "🛍️"
-        "Entertainment" -> "🎬"
-        "Bills & Utilities" -> "💡"
-        "Health" -> "🏥"
-        "Travel" -> "✈️"
-        "Education" -> "📚"
-        else -> "💰"
-    }
-}

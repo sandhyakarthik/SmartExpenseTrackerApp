@@ -19,7 +19,8 @@ class GetCategorySummaryUseCase @Inject constructor
             dtoList.map { dto ->
                 CategorySummary(
                     category = dto.category,
-                    totalAmount = dto.totalAmount
+                    totalAmount = dto.totalAmount,
+                    transactionCount = dto.transactionCount
                 )
             }
         }

@@ -5,42 +5,26 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.sandhya.expensetracker.R
 import com.sandhya.expensetracker.Screen
-import com.sandhya.expensetracker.domain.model.MonthlySummary
-import com.sandhya.expensetracker.ui.component.CategorySummaryItem
 import com.sandhya.expensetracker.ui.component.ExpenseItem
 import com.sandhya.expensetracker.ui.component.ExpenseTopAppBar
 import com.sandhya.expensetracker.ui.component.SummaryCards
@@ -56,23 +40,23 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.uiState.collectAsState()
-    val monthlySummary by viewModel.monthlySummary.collectAsState(initial = MonthlySummary(0.0, 0))
-    val totalSummary by viewModel.totalSummary.collectAsState(initial = MonthlySummary(0.0, 0))
+    val uiState by viewModel.uiState.collectAsState()
+    val dashboardState by viewModel.dashboardState.collectAsState()
 
     Scaffold(
         topBar = {
-            ExpenseTopAppBar(title = "SmartExpenseTracker")
+            ExpenseTopAppBar(title = stringResource(R.string.app_name))
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(Screen.AddExpense.route) }
+                onClick = { navController.navigate(Screen.AddExpense.route) },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Expense")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.desc_add_expense))
             }
         }
     ) { padding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -84,86 +68,46 @@ fun HomeScreen(
                 color = MaterialTheme.colorScheme.outlineVariant
             )
 
-            // Dashboard Summary Cards
-            SummaryCards(
-                totalSpent = totalSummary.totalSpent,
-                monthlySpent = monthlySummary.totalSpent
-            )
-
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                when (state) {
+                when (uiState) {
                     is ExpenseUiState.Loading -> {
                         CircularProgressIndicator()
                     }
 
                     is ExpenseUiState.Empty -> {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "💰",
-                                style = MaterialTheme.typography.displayMedium
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                text = "No expenses yet",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Start tracking your spending\nto build better financial habits.",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center
-                            )
-                        }
+                        EmptyHomeContent(
+                            totalSpent = dashboardState.totalSpent,
+                            monthlySpent = dashboardState.monthlySpent
+                        )
                     }
 
                     is ExpenseUiState.Success -> {
-                        val expenses = (state as ExpenseUiState.Success).expenses
-                        val categories by viewModel.categorySummaries.collectAsState(initial = emptyList())
-
+                        val expenses = (uiState as ExpenseUiState.Success).expenses
+                        
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(bottom = 80.dp)
                         ) {
-                            // 1. Category Section Header
-                           /* if (categories.isNotEmpty()) {
-                                item {
-                                    Text(
-                                        text = "Spending by Category",
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 12.dp),
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                }
-
-                                // 2. Category Cards
-                                items(categories, key = { category -> "cat_${category.category}" }) { categorySummary ->
-                                    CategorySummaryItem(categorySummary = categorySummary)
-                                }
-                            }*/
-
-                            // 3. Recent Transactions Section Header
                             item {
-                                Text(
-                                    text = "Recent Expenses",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 12.dp),
-                                    color = MaterialTheme.colorScheme.onSurface
+                                SummaryCards(
+                                    totalSpent = dashboardState.totalSpent,
+                                    monthlySpent = dashboardState.monthlySpent
                                 )
                             }
 
-                            // 4. Swipe-to-Delete Transaction Items
+                            item {
+                                Text(
+                                    text = stringResource(R.string.title_recent_expenses),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
                             items(expenses, key = { expense -> expense.id }) { expense ->
                                 val dismissState = rememberSwipeToDismissBoxState(
                                     confirmValueChange = { dismissValue ->
@@ -202,7 +146,7 @@ fun HomeScreen(
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Delete,
-                                                contentDescription = "Delete Expense",
+                                                contentDescription = stringResource(R.string.desc_delete_expense),
                                                 tint = MaterialTheme.colorScheme.onErrorContainer
                                             )
                                         }
@@ -219,14 +163,60 @@ fun HomeScreen(
                     }
 
                     is ExpenseUiState.Error -> {
-                        val errorMessage = (state as ExpenseUiState.Error).message
                         Text(
-                            text = errorMessage,
+                            text = (uiState as ExpenseUiState.Error).message,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.error
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(32.dp)
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun EmptyHomeContent(
+    totalSpent: Double,
+    monthlySpent: Double
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        item {
+            SummaryCards(
+                totalSpent = totalSpent,
+                monthlySpent = monthlySpent
+            )
+        }
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 100.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "💰",
+                    style = MaterialTheme.typography.displayMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = stringResource(R.string.msg_no_expenses),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.msg_empty_habits),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                )
             }
         }
     }

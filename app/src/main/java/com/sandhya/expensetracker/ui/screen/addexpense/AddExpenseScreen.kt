@@ -15,24 +15,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -44,13 +46,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.sandhya.expensetracker.R
 import com.sandhya.expensetracker.data.local.CategoryEntity
 import com.sandhya.expensetracker.ui.component.ExpenseTopAppBar
+import com.sandhya.expensetracker.ui.component.getCategoryEmoji
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -68,7 +73,8 @@ fun AddExpenseScreen(navController: NavController) {
     var amount by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<CategoryEntity?>(null) }
-    var expanded by remember { mutableStateOf(false) }
+    var showCategorySheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
 
     // Date Picker State
     var showDatePicker by remember { mutableStateOf(false) }
@@ -114,24 +120,27 @@ fun AddExpenseScreen(navController: NavController) {
     Scaffold(
         topBar = {
             ExpenseTopAppBar(
-                title = "Add Expense",
+                title = stringResource(R.string.nav_add_expense),
                 canNavigateBack = true,
                 navigateUp = { navController.popBackStack() },
             )
         }
     ) { padding ->
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .padding(padding)
                 .padding(16.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // 1. Title Field
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Title (e.g., Burger King)") },
+                label = { Text(stringResource(R.string.label_title)) },
+                placeholder = { Text(stringResource(R.string.hint_title)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -140,66 +149,87 @@ fun AddExpenseScreen(navController: NavController) {
             OutlinedTextField(
                 value = amount,
                 onValueChange = { amount = it },
-                label = { Text("Amount") },
+                label = { Text(stringResource(R.string.label_amount)) },
                 prefix = { Text("$ ") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
 
-            // 3. Category Selection Dropdown (Improved)
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded },
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            // 3. Category Selection (Professional Bottom Sheet)
+            Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
-                    value = selectedCategory?.name ?: "Select Category",
+                    value = selectedCategory?.name ?: stringResource(R.string.msg_select_category),
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Category") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
+                    label = { Text(stringResource(R.string.label_category)) },
+                    trailingIcon = { 
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown, 
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        ) 
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable { showCategorySheet = true }
+                )
+            }
 
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
+            // Category Bottom Sheet
+            if (showCategorySheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showCategorySheet = false },
+                    sheetState = sheetState,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    dragHandle = { BottomSheetDefaults.DragHandle() }
                 ) {
-                    if (categories.isEmpty()) {
-                        DropdownMenuItem(
-                            text = { Text("No categories found") },
-                            onClick = { expanded = false }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 32.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.msg_select_category),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(16.dp)
                         )
-                    }
-                    categories.forEach { category ->
-                        DropdownMenuItem(
-                            text = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                        
+                        if (categories.isEmpty()) {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().padding(32.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(stringResource(R.string.msg_no_categories), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
+
+                        categories.forEach { category ->
+                            ListItem(
+                                headlineContent = { Text(category.name) },
+                                leadingContent = {
                                     Box(
                                         modifier = Modifier
-                                            .size(32.dp)
+                                            .size(40.dp)
                                             .background(
                                                 color = Color(android.graphics.Color.parseColor(category.colorHex)).copy(alpha = 0.2f),
                                                 shape = CircleShape
                                             ),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text(getCategoryEmoji(category.name))
+                                        Text(getCategoryEmoji(category.name), style = MaterialTheme.typography.titleMedium)
                                     }
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Text(text = category.name)
+                                },
+                                modifier = Modifier.clickable {
+                                    selectedCategory = category
+                                    showCategorySheet = false
                                 }
-                            },
-                            onClick = {
-                                selectedCategory = category
-                                expanded = false
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                        )
+                            )
+                        }
                     }
                 }
             }
@@ -209,7 +239,7 @@ fun AddExpenseScreen(navController: NavController) {
                 OutlinedTextField(
                     value = selectedDateFormatted.value,
                     onValueChange = {},
-                    label = { Text("Date") },
+                    label = { Text(stringResource(R.string.label_date)) },
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(),
                     trailingIcon = {
@@ -227,17 +257,16 @@ fun AddExpenseScreen(navController: NavController) {
             OutlinedTextField(
                 value = note,
                 onValueChange = { note = it },
-                label = { Text("Notes (optional details)") },
+                label = { Text(stringResource(R.string.label_notes)) },
+                placeholder = { Text(stringResource(R.string.hint_notes)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3
             )
 
-            Spacer(modifier = Modifier.weight(1f))
-
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(vertical = 16.dp),
                 enabled = amount.isNotBlank() && selectedCategory != null && title.isNotBlank(),
                 onClick = {
                     val amountValue = amount.toDoubleOrNull() ?: return@Button
@@ -250,7 +279,7 @@ fun AddExpenseScreen(navController: NavController) {
                 }
             ) {
                 Text(
-                    "Save Expense",
+                    stringResource(R.string.btn_save),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -259,16 +288,3 @@ fun AddExpenseScreen(navController: NavController) {
     }
 }
 
-private fun getCategoryEmoji(category: String): String {
-    return when (category) {
-        "Food & Drinks" -> "🍔"
-        "Transportation" -> "🚗"
-        "Shopping" -> "🛍️"
-        "Entertainment" -> "🎬"
-        "Bills & Utilities" -> "💡"
-        "Health" -> "🏥"
-        "Travel" -> "✈️"
-        "Education" -> "📚"
-        else -> "💰"
-    }
-}

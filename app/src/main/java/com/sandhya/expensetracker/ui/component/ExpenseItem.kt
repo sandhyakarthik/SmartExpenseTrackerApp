@@ -23,8 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.sandhya.expensetracker.R
 import com.sandhya.expensetracker.domain.model.ExpenseDetail
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -80,7 +82,7 @@ fun ExpenseItem(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = if (expense.note.isNullOrBlank()) "No description" else expense.note,
+                    text = if (expense.note.isNullOrBlank()) stringResource(R.string.msg_no_description) else expense.note,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

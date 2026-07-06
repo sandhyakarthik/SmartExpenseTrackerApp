@@ -138,8 +138,20 @@ class ReportsViewModel @Inject constructor(
             initialValue = null
         )
 
-    fun updateDateFilter(startTimestamp: Long, endTimestamp: Long, formattedText: String) {
+    fun updateDateFilter(startTimestamp: Long, endTimestamp: Long) {
         _dateFilter.value = Pair(startTimestamp, endTimestamp)
-        _dateRangeText.value = formattedText
+        
+        val formatter = SimpleDateFormat("MMM d", Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        val yearFormatter = SimpleDateFormat("yyyy", Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        
+        val start = formatter.format(Date(startTimestamp))
+        val end = formatter.format(Date(endTimestamp))
+        val year = yearFormatter.format(Date(endTimestamp))
+        
+        _dateRangeText.value = "$start — $end, $year"
     }
 }

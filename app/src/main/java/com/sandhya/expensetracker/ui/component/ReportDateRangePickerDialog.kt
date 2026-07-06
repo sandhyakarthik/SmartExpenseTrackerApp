@@ -14,7 +14,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.sandhya.expensetracker.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,12 +45,12 @@ fun ReportDateRangePickerDialog(
                     onDismiss()
                 }
             ) {
-                Text("Apply")
+                Text(stringResource(R.string.btn_apply))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.btn_cancel))
             }
         }
     ) {
@@ -57,7 +59,7 @@ fun ReportDateRangePickerDialog(
             state = dateRangePickerState,
             title = {
                 Text(
-                    text = "Select Date Range",
+                    text = stringResource(R.string.msg_select_date_range),
                     modifier = Modifier.padding(start = 24.dp, top = 24.dp),
                     style = MaterialTheme.typography.headlineSmall
                 )

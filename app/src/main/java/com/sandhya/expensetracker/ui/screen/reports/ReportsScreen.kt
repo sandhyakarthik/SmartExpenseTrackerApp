@@ -13,10 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sandhya.expensetracker.R
 import com.sandhya.expensetracker.domain.model.CategorySummary
 import com.sandhya.expensetracker.ui.component.*
 import java.text.SimpleDateFormat
@@ -40,7 +42,7 @@ fun ReportsScreen(
 
     Scaffold(
         topBar = {
-            ExpenseTopAppBar(title = "Monthly Report")
+            ExpenseTopAppBar(title = stringResource(R.string.nav_reports))
         }
     ) { padding ->
         Column(
@@ -54,51 +56,80 @@ fun ReportsScreen(
                 color = MaterialTheme.colorScheme.outlineVariant
             )
 
-            // 1.Date Picker (FilterChip)
-            FilterChip(
-                selected = true,
-                onClick = { showDatePicker = true },
-                label = {
-                    Text(
-                        text = "$selectedDateRangeText ▼",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.SemiBold
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    // 1.Date Picker (FilterChip)
+                    FilterChip(
+                        selected = true,
+                        onClick = { showDatePicker = true },
+                        label = {
+                            Text(
+                                text = "$selectedDateRangeText ▼",
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        },
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        shape = RoundedCornerShape(20.dp)
                     )
-                },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(20.dp)
-            )
-
-            //2. Top Summary Card
-            ReportSummaryCard(
-                totalAmount = totalAmount,
-                selectedRange = selectedDateRangeText,
-                trend = trend
-            )
-            
-            if (summaries.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "No expenses recorded\n" +
-                            "Add your first expense to view reports.", style = MaterialTheme.typography.bodyLarge)
                 }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
+
+                item {
+                    //2. Top Summary Card
+                    ReportSummaryCard(
+                        totalAmount = totalAmount,
+                        selectedRange = selectedDateRangeText,
+                        trend = trend,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+                
+                if (summaries.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(400.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = "📊",
+                                    style = MaterialTheme.typography.displayLarge
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = stringResource(R.string.msg_no_expenses),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = stringResource(R.string.msg_add_first_expense),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    modifier = Modifier.padding(horizontal = 32.dp)
+                                )
+                            }
+                        }
+                    }
+                } else {
                     item {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Spending Distribution",
+                                text = stringResource(R.string.title_spending_dist),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.secondary,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(top = 16.dp)
+                                modifier = Modifier.padding(top = 8.dp)
                             )
                             //3.PIE CHART
                             ExpensePieChart(
@@ -109,11 +140,11 @@ fun ReportsScreen(
                     }
                     item {
                         Text(
-                            text = "Category Details",
+                            text = stringResource(R.string.title_category_details),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.secondary,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                         )
                     }
                     items(summaries) { summary ->
@@ -131,14 +162,7 @@ fun ReportsScreen(
             onDismiss = { showDatePicker = false },
             onDateRangeSelected = { startTimestamp, endTimestamp ->
                 if (startTimestamp != null && endTimestamp != null) {
-                    val formatter = SimpleDateFormat("MMM d", Locale.getDefault()).apply {
-                        timeZone = TimeZone.getTimeZone("UTC")
-                    }
-                    val start = formatter.format(Date(startTimestamp))
-                    val end = formatter.format(Date(endTimestamp))
-                    val formattedText = "$start—$end, 2026"
-
-                    viewModel.updateDateFilter(startTimestamp, endTimestamp, formattedText)
+                    viewModel.updateDateFilter(startTimestamp, endTimestamp)
                 }
             }
         )
@@ -157,8 +181,7 @@ fun ReportSummaryCard(
 
     ElevatedCard(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+            .fillMaxWidth(),
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         )
@@ -168,16 +191,8 @@ fun ReportSummaryCard(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            /*Text(
-                text = selectedRange,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-            )
-            
-            Spacer(modifier = Modifier.height(12.dp))*/
-
             Text(
-                text = "Total Spending",
+                text = stringResource(R.string.title_total_spending),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
             )

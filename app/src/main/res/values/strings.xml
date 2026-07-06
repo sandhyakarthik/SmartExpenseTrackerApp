@@ -1,3 +1,49 @@
 <resources>
-    <string name="app_name">SmartExpenseTrackerApp</string>
+    <string name="app_name">Smart Expense Tracker</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_reports">Reports</string>
+    <string name="nav_budget">Budget</string>
+    <string name="nav_add_expense">Add Expense</string>
+
+    <!-- Buttons -->
+    <string name="btn_save">Save Expense</string>
+    <string name="btn_apply">Apply</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_ok">OK</string>
+
+    <!-- Labels & Hints -->
+    <string name="label_title">Title</string>
+    <string name="hint_title">e.g., Burger King</string>
+    <string name="label_amount">Amount</string>
+    <string name="label_category">Category</string>
+    <string name="label_date">Date</string>
+    <string name="label_notes">Notes</string>
+    <string name="hint_notes">optional details</string>
+
+    <!-- Titles & Headers -->
+    <string name="title_recent_expenses">Recent Expenses</string>
+    <string name="title_spending_dist">Spending Distribution</string>
+    <string name="title_category_details">Category Details</string>
+    <string name="title_total_spending">Total Spending</string>
+    <string name="title_total_expenses">Total Expenses</string>
+    <string name="title_this_month">This Month</string>
+    <string name="title_total_spent">Total Spent</string>
+
+    <!-- Messages & Empty States -->
+    <string name="msg_no_expenses">No expenses recorded</string>
+    <string name="msg_empty_habits">Start tracking your spending to build better financial habits.</string>
+    <string name="msg_add_first_expense">Add your first expense to see your spending reports here.</string>
+    <string name="msg_no_categories">No categories found</string>
+    <string name="msg_select_category">Select Category</string>
+    <string name="msg_no_description">No description</string>
+    <string name="msg_select_date_range">Select Date Range</string>
+    <string name="msg_placeholder_title">%1$s Screen</string>
+    <string name="msg_coming_soon">Coming soon in the next update!</string>
+
+    <!-- Content Descriptions -->
+    <string name="desc_add_expense">Add Expense</string>
+    <string name="desc_delete_expense">Delete Expense</string>
+    <string name="desc_back">Back</string>
 </resources>

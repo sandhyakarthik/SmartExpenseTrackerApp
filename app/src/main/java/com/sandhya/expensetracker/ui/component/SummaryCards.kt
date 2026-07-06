@@ -10,8 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.sandhya.expensetracker.R
 import java.util.Locale
 
 /**
@@ -30,12 +32,12 @@ fun SummaryCards(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         SummaryCard(
-            title = "Total Expenses",
+            title = stringResource(R.string.title_total_expenses),
             amount = totalSpent,
             modifier = Modifier.weight(1f)
         )
         SummaryCard(
-            title = "This Month",
+            title = stringResource(R.string.title_this_month),
             amount = monthlySpent,
             modifier = Modifier.weight(1f)
         )

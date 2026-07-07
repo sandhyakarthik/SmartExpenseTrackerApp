@@ -2,34 +2,23 @@ package com.sandhya.expensetracker.di
 
 import android.content.Context
 import androidx.room.Room
-import com.sandhya.expensetracker.data.local.CategoryDao
-import com.sandhya.expensetracker.data.local.DefaultCategories
-import com.sandhya.expensetracker.data.local.ExpenseDao
-import com.sandhya.expensetracker.data.local.ExpenseDatabase
-import com.sandhya.expensetracker.data.repository.CategoryRepositoryImpl
-import com.sandhya.expensetracker.data.repository.ExpenseRepositoryImpl
-import com.sandhya.expensetracker.domain.repository.CategoryRepository
-import com.sandhya.expensetracker.domain.repository.ExpenseRepository
-import com.sandhya.expensetracker.domain.usecase.AddExpenseUseCase
-import com.sandhya.expensetracker.domain.usecase.DeleteExpenseUseCase
-import com.sandhya.expensetracker.domain.usecase.GetCategoriesUseCase
-import com.sandhya.expensetracker.domain.usecase.GetCategorySummaryUseCase
-import com.sandhya.expensetracker.domain.usecase.GetExpensesUseCase
-import com.sandhya.expensetracker.domain.usecase.GetExpensesWithCategoryUseCase
-import com.sandhya.expensetracker.domain.usecase.GetMonthlyCategorySummaryUseCase
-import com.sandhya.expensetracker.domain.usecase.GetMonthlySummaryUseCase
-import com.sandhya.expensetracker.domain.usecase.GetTotalSpentInRangeUseCase
-import com.sandhya.expensetracker.domain.usecase.GetTotalSummaryUseCase
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.sandhya.expensetracker.data.local.*
+import com.sandhya.expensetracker.data.repository.*
+import com.sandhya.expensetracker.domain.repository.*
+import com.sandhya.expensetracker.domain.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import javax.inject.Singleton
 
-/**
- *Created by  Sandhya D on 2/4/2026.
- */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -37,98 +26,105 @@ object AppModule {
     @Singleton
     fun provideDatabase(
         @ApplicationContext context: Context
-    ): ExpenseDatabase =
-        Room.databaseBuilder(
+    ): ExpenseDatabase {
+        return Room.databaseBuilder(
             context,
             ExpenseDatabase::class.java,
-            "expense_tracker_db"
+            "smart_expense_db"
         ).fallbackToDestructiveMigration()
-            .addCallback(object : androidx.room.RoomDatabase.Callback() {
-                override fun onCreate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+            .addCallback(object : RoomDatabase.Callback() {
+                override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
-                    DefaultCategories.list.forEach { category ->
-                        db.execSQL(
-                            "INSERT INTO categories (name, iconName, colorHex) VALUES ('${category.name}', '${category.iconName}', '${category.colorHex}')"
-                        )
+                    CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+                        populateCategories(db)
+                    }
+                }
+
+                override fun onOpen(db: SupportSQLiteDatabase) {
+                    super.onOpen(db)
+                    CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+                        populateCategories(db)
                     }
                 }
             })
             .build()
+    }
+
+    private fun populateCategories(db: SupportSQLiteDatabase) {
+        db.beginTransaction()
+        try {
+            DefaultCategories.list.forEach { category ->
+                db.execSQL(
+                    "INSERT OR IGNORE INTO categories (name, iconName, colorHex) " +
+                    "VALUES ('${category.name}', '${category.iconName}', '${category.colorHex}')"
+                )
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+    }
 
     @Provides
-    fun provideExpenseDao(db: ExpenseDatabase): ExpenseDao =
-        db.expenseDao()
+    fun provideExpenseDao(db: ExpenseDatabase): ExpenseDao = db.expenseDao()
 
     @Provides
-    fun provideCategoryDao(db: ExpenseDatabase): CategoryDao =
-        db.categoryDao()
+    fun provideCategoryDao(db: ExpenseDatabase): CategoryDao = db.categoryDao()
+
+    @Provides
+    fun provideBudgetDao(db: ExpenseDatabase): BudgetDao = db.budgetDao()
 
     @Provides
     @Singleton
-    fun provideExpenseRepository(
-        dao: ExpenseDao
-    ): ExpenseRepository =
-        ExpenseRepositoryImpl(dao)
+    fun provideExpenseRepository(dao: ExpenseDao): ExpenseRepository = ExpenseRepositoryImpl(dao)
 
     @Provides
     @Singleton
-    fun provideCategoryRepository(
-        dao: CategoryDao
-    ): CategoryRepository =
-        CategoryRepositoryImpl(dao)
+    fun provideCategoryRepository(dao: CategoryDao): CategoryRepository = CategoryRepositoryImpl(dao)
 
     @Provides
-    fun provideAddExpenseUseCase(repo: ExpenseRepository) =
-        AddExpenseUseCase(repo)
+    @Singleton
+    fun provideBudgetRepository(dao: BudgetDao): BudgetRepository = BudgetRepositoryImpl(dao)
 
     @Provides
-    fun provideGetExpensesUseCase(repo: ExpenseRepository) =
-        GetExpensesUseCase(repo)
+    fun provideAddExpenseUseCase(repo: ExpenseRepository) = AddExpenseUseCase(repo)
 
     @Provides
-    fun provideGetExpensesWithCategoryUseCase(repo: ExpenseRepository) =
-        GetExpensesWithCategoryUseCase(repo)
+    fun provideGetExpensesUseCase(repo: ExpenseRepository) = GetExpensesUseCase(repo)
 
     @Provides
-    fun provideGetCategoriesUseCase(repo: CategoryRepository) =
-        GetCategoriesUseCase(repo)
+    fun provideGetExpensesWithCategoryUseCase(repo: ExpenseRepository) = GetExpensesWithCategoryUseCase(repo)
 
     @Provides
-    fun provideDeleteExpenseUseCase(repo: ExpenseRepository) =
-        DeleteExpenseUseCase(repo)
+    fun provideGetCategoriesUseCase(repo: CategoryRepository) = GetCategoriesUseCase(repo)
 
     @Provides
-    fun provideGetMonthlySummaryUseCase(
-        repository: ExpenseRepository
-    ): GetMonthlySummaryUseCase {
-        return GetMonthlySummaryUseCase(repository)
-    }
+    fun provideDeleteExpenseUseCase(repo: ExpenseRepository) = DeleteExpenseUseCase(repo)
 
     @Provides
-    fun provideGetTotalSummaryUseCase(
-        repository: ExpenseRepository
-    ): GetTotalSummaryUseCase {
-        return GetTotalSummaryUseCase(repository)
-    }
+    fun provideGetMonthlySummaryUseCase(repo: ExpenseRepository) = GetMonthlySummaryUseCase(repo)
 
     @Provides
-    fun provideGetTotalSpentInRangeUseCase(
-        repository: ExpenseRepository
-    ): GetTotalSpentInRangeUseCase {
-        return GetTotalSpentInRangeUseCase(repository)
-    }
+    fun provideGetTotalSummaryUseCase(repo: ExpenseRepository) = GetTotalSummaryUseCase(repo)
 
     @Provides
-    fun provideGetCategorySummaryUseCase(
-        repository: ExpenseRepository
-    ): GetCategorySummaryUseCase {
-        return GetCategorySummaryUseCase(repository)
-    }
+    fun provideGetTotalSpentInRangeUseCase(repo: ExpenseRepository) = GetTotalSpentInRangeUseCase(repo)
 
     @Provides
-    fun provideGetMonthlyCategorySummaryUseCase(
-        repository: ExpenseRepository
-    ): GetMonthlyCategorySummaryUseCase {
-        return GetMonthlyCategorySummaryUseCase(repository)
-    }
+    fun provideGetCategorySummaryUseCase(repo: ExpenseRepository) = GetCategorySummaryUseCase(repo)
+
+    @Provides
+    fun provideGetMonthlyCategorySummaryUseCase(repo: ExpenseRepository) = GetMonthlyCategorySummaryUseCase(repo)
+
+    @Provides
+    fun provideAddBudgetUseCase(repo: BudgetRepository) = AddBudgetUseCase(repo)
+
+    @Provides
+    fun provideGetBudgetsForMonthUseCase(repo: BudgetRepository) = GetBudgetsForMonthUseCase(repo)
+
+    @Provides
+    fun provideUpdateBudgetUseCase(repo: BudgetRepository) = UpdateBudgetUseCase(repo)
+
+    @Provides
+    fun provideDeleteBudgetUseCase(repo: BudgetRepository) = DeleteBudgetUseCase(repo)
 }

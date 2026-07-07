@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
  * Created by Sandhya D on 2/4/2026.
  */
 @Database(
-    entities = [ExpenseEntity::class, CategoryEntity::class],
+    entities = [ExpenseEntity::class, CategoryEntity::class, BudgetEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -15,4 +15,5 @@ abstract class ExpenseDatabase : RoomDatabase() {
 
     abstract fun expenseDao(): ExpenseDao
     abstract fun categoryDao(): CategoryDao
+    abstract fun budgetDao(): BudgetDao
 }

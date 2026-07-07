@@ -3,9 +3,7 @@ package com.sandhya.expensetracker
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -23,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -36,6 +33,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sandhya.expensetracker.ui.screen.addexpense.AddExpenseScreen
+import com.sandhya.expensetracker.ui.screen.budget.BudgetScreen
 import com.sandhya.expensetracker.ui.screen.home.HomeScreen
 import com.sandhya.expensetracker.ui.screen.reports.ReportsScreen
 import com.sandhya.expensetracker.ui.theme.SmartExpenseTrackerAppTheme
@@ -102,7 +100,7 @@ class MainActivity : ComponentActivity() {
                             ReportsScreen()
                         }
                         composable(Screen.Budget.route) {
-                            PlaceholderScreen(stringResource(Screen.Budget.labelRes))
+                            BudgetScreen()
                         }
                         composable(Screen.AddExpense.route) {
                             AddExpenseScreen(navController)
@@ -110,33 +108,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun PlaceholderScreen(name: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = when(name) {
-                    stringResource(R.string.nav_reports) -> "📊"
-                    stringResource(R.string.nav_budget) -> "🎯"
-                    else -> "🏗️"
-                },
-                style = MaterialTheme.typography.displayLarge
-            )
-            Spacer(modifier = Modifier.padding(8.dp))
-            Text(
-                text = stringResource(R.string.msg_placeholder_title, name),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = stringResource(R.string.msg_coming_soon),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
     }
 }

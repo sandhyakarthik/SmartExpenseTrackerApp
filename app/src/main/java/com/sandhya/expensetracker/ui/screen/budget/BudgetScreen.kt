@@ -32,7 +32,7 @@ fun BudgetScreen(
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            
+
             if (uiState.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
@@ -65,7 +65,7 @@ fun BudgetScreen(
 
                     item {
                         OutlinedButton(
-                            onClick = { 
+                            onClick = {
                                 val firstEmpty = uiState.items.find { it.budgetedAmount == 0.0 }
                                 selectedItem = firstEmpty ?: uiState.items.firstOrNull()
                             },
@@ -78,7 +78,7 @@ fun BudgetScreen(
                             Text("Add Budget", style = MaterialTheme.typography.titleMedium)
                         }
                     }
-                    
+
                     item { Spacer(modifier = Modifier.height(32.dp)) }
                 }
             }

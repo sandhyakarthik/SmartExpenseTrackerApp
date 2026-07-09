@@ -24,7 +24,7 @@ fun ReportsScreen(
     viewModel: ReportsViewModel = hiltViewModel()
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
-    
+
     val selectedDateRangeText by viewModel.dateRangeText.collectAsState()
 
     val summaries by viewModel.monthlyCategorySummaries.collectAsState()
@@ -79,7 +79,7 @@ fun ReportsScreen(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
-                
+
                 if (summaries.isEmpty()) {
                     item {
                         Box(

@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -86,7 +87,7 @@ fun HomeScreen(
 
                     is ExpenseUiState.Success -> {
                         val expenses = (uiState as ExpenseUiState.Success).expenses
-                        
+
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(bottom = 80.dp)
@@ -123,11 +124,11 @@ fun HomeScreen(
                                 SwipeToDismissBox(
                                     state = dismissState,
                                     enableDismissFromStartToEnd = false,
-                                    modifier = Modifier.animateItem(
+                                    /*modifier = Modifier.animateItem(
                                         fadeInSpec = tween(durationMillis = 300),
                                         fadeOutSpec = tween(durationMillis = 300),
                                         placementSpec = spring(stiffness = Spring.StiffnessMediumLow)
-                                    ),
+                                    ),*/
                                     backgroundContent = {
                                         val backgroundColor by animateColorAsState(
                                             targetValue = when (dismissState.targetValue) {

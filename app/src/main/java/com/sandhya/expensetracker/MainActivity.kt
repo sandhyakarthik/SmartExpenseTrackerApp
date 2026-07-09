@@ -56,20 +56,20 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
                         val currentDestination = navBackStackEntry?.destination
-                        
+
                         // Only show bottom bar on top-level destinations
                         val showBottomBar = items.any { it.route == currentDestination?.route }
-                        
+
                         if (showBottomBar) {
                             NavigationBar {
                                 items.forEach { screen ->
                                     val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
                                     NavigationBarItem(
-                                        icon = { 
+                                        icon = {
                                             Icon(
-                                                imageVector = if (selected) screen.selectedIcon else screen.unselectedIcon, 
-                                                contentDescription = null 
-                                            ) 
+                                                imageVector = if (selected) screen.selectedIcon else screen.unselectedIcon,
+                                                contentDescription = null
+                                            )
                                         },
                                         label = { Text(stringResource(screen.labelRes)) },
                                         selected = selected,
@@ -113,21 +113,21 @@ class MainActivity : ComponentActivity() {
 }
 
 sealed class Screen(
-    val route: String, 
-    val labelRes: Int, 
-    val selectedIcon: ImageVector, 
+    val route: String,
+    val labelRes: Int,
+    val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 ) {
     object Home : Screen(
-        "home", R.string.nav_home, 
+        "home", R.string.nav_home,
         Icons.Filled.Home, Icons.Outlined.Home
     )
     object Reports : Screen(
-        "reports", R.string.nav_reports, 
+        "reports", R.string.nav_reports,
         Icons.Filled.BarChart, Icons.Outlined.BarChart
     )
     object Budget : Screen(
-        "budget", R.string.nav_budget, 
+        "budget", R.string.nav_budget,
         Icons.Filled.AccountBalanceWallet, Icons.Outlined.AccountBalanceWallet
     )
     object AddExpense : Screen(

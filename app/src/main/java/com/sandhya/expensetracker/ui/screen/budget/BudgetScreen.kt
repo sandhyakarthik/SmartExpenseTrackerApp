@@ -27,7 +27,7 @@ fun BudgetScreen(
 
     Scaffold(
         topBar = {
-            ExpenseTopAppBar(title = "💰 ${stringResource(R.string.nav_budget)}")
+            ExpenseTopAppBar(title = "${stringResource(R.string.nav_budget)}")
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
@@ -56,7 +56,10 @@ fun BudgetScreen(
                         )
                     }
 
-                    items(uiState.items) { item ->
+                    items(
+                        items = uiState.items,
+                        key = { it.categoryId }
+                    ) { item ->
                         CategoryBudgetListItem(
                             item = item,
                             onClick = { selectedItem = item }

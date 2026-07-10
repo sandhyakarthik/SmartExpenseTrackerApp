@@ -2,10 +2,10 @@
     <string name="app_name">Smart Expense Tracker</string>
 
     <!-- Navigation -->
-    <string name="nav_home">Home</string>
-    <string name="nav_reports">Reports</string>
-    <string name="nav_budget">Budget</string>
-    <string name="nav_add_expense">Add Expense</string>
+    <string name="nav_home"> Home</string>
+    <string name="nav_reports"> Reports</string>
+    <string name="nav_budget"> Budget</string>
+    <string name="nav_add_expense">➕ Add Expense</string>
 
     <!-- Buttons -->
     <string name="btn_save">Save Expense</string>
@@ -23,12 +23,12 @@
     <string name="hint_notes">optional details</string>
 
     <!-- Titles & Headers -->
-    <string name="title_recent_expenses">Recent Expenses</string>
+    <string name="title_recent_expenses">Recent Transactions</string>
     <string name="title_spending_dist">Spending Distribution</string>
     <string name="title_category_details">Category Details</string>
-    <string name="title_total_spending">Total Spending</string>
+    <string name="title_total_spending">💳&#160;&#160;Total Spending</string>
     <string name="title_total_expenses">Total Expenses</string>
-    <string name="title_this_month">This Month</string>
+    <string name="title_this_month">📅&#160;&#160;This Month</string>
     <string name="title_total_spent">Total Spent</string>
 
     <!-- Messages & Empty States -->

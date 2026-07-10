@@ -46,7 +46,7 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            ExpenseTopAppBar(title = stringResource(R.string.app_name))
+            ExpenseTopAppBar(title ="Track your spending wisely" /*stringResource(R.string.app_name)*/)
         },
         floatingActionButton = {
             FloatingActionButton(

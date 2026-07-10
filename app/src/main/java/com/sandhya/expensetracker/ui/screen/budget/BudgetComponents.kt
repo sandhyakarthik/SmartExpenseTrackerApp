@@ -110,7 +110,9 @@ fun CategoryBudgetListItem(
     )
     // 2. ADDED: Wrapped inside a Card container for professional surface separation
     ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surface

@@ -148,7 +148,7 @@ fun SummaryCards(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         SummaryCardSection(
-            title = stringResource(R.string.title_total_expenses),
+            title = stringResource(R.string.title_total_spending),
             amount = totalSpent,
             modifier = Modifier.weight(1f)
         )
@@ -184,11 +184,12 @@ private fun SummaryCardSection(
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
             )
             Text(
-                text = String.format(Locale.getDefault(), "$%.0f", amount),
+                text = String.format(Locale.getDefault(), "$%,.0f", amount),
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.ExtraBold,
+                fontWeight = FontWeight.SemiBold,
                 //color = MaterialTheme.colorScheme.primary
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.padding(top = 2.dp)
             )
         }
     }

@@ -12,82 +12,78 @@ This project was developed as part of my Android Developer portfolio to showcase
 
 ---
 
-## 🚀 Features
+## 🚀 Key Features
 
-### Expense Management
-- Add new expenses
-- View all expenses
-- Delete expenses
-- Store data locally
+### 📊 Visual Financial Insights
+- **Interactive Pie Chart**: Real-time spending distribution with animated percentage labels for every category.
+- **Spending Trends**: Instant comparison logic that tracks if you are spending more or less than the previous month.
+- **Dynamic Date Filtering**: Custom date range selection using a modern Material 3 DateRangePicker to analyze specific time periods.
 
-### User-Friendly Interface
-- Clean Material Design UI
-- Responsive layouts
-- Easy navigation
+### 💸 Smart Expense Management
+- **Categorized Tracking**: Organize spending into custom categories (Food, Transport, Health, etc.) with unique icons and colors.
+- **High-Precision History**: Recent transactions are displayed with exact date and time stamps for better recall.
+- **Effortless Entry**: A streamlined "Add Expense" flow with category bottom sheets and custom notes.
+- **Swipe-to-Action**: Native swipe-to-dismiss functionality for quick and intuitive record deletion.
 
-### Data Persistence
-- Room Database integration
-- Offline-first architecture
-
-### Architecture
-- MVVM (Model-View-ViewModel)
-- Repository Pattern
-- Separation of Concerns
+### 🎨 Modern UI & Performance
+- **Jetpack Compose**: 100% declarative UI for a fluid, responsive, and state-driven interface.
+- **Material 3 Design**: Leveraging the latest Android design system for a premium look.
+- **Optimized for Speed**: Reactive UI updates powered by Kotlin Coroutines and StateFlow.
+- **Offline Reliability**: Full data persistence using Room Database, ensuring the app works perfectly without an internet connection.
 
 ---
 
 ## 🛠 Tech Stack
 
-### Language
-- Kotlin
+### 📱 UI & Design
+- **Jetpack Compose**: 100% declarative UI toolkit for modern Android development.
+- **Material Design 3 (M3)**: The latest evolution of Google's design system.
+- **Custom Canvas**: Used for high-performance interactive charts.
 
-### Architecture
-- MVVM Architecture
-- Repository Pattern
+### 🏗 Architecture
+- **Clean Architecture**: Clear separation of concerns between Data, Domain, and UI layers.
+- **MVVM Pattern**: Robust state management using ViewModels.
+- **Use Cases**: Encapsulated business logic for better testability and reusability.
+- **Repository Pattern**: Abstracted data access logic.
 
-### Jetpack Components
-- ViewModel
-- LiveData
-- Room Database
-- Lifecycle Components
+### 📦 Data & Persistence
+- **Room Database**: Type-safe local data persistence.
+- **Kotlin Serialization**: Efficient JSON handling (if applicable).
 
-### Asynchronous Programming
-- Kotlin Coroutines
+### 🚀 Core Libraries
+- **Hilt (Dagger)**: Standardized dependency injection.
+- **Kotlin Coroutines & Flow**: For reactive programming and asynchronous task handling.
+- **Jetpack Navigation**: Type-safe navigation between Compose screens.
 
-### UI
-- XML Layouts
-- Material Design Components
-
-### Version Control
-- Git
-- GitHub
+### 🛠 Tools
+- **Android Studio**: Latest IDE version for professional development.
+- **Git & GitHub**: Version control and project management.
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-SmartExpenseTrackerApp
+com.sandhya.expensetracker
 │
-├── data
-│   ├── local
-│   │   ├── ExpenseDao
-│   │   ├── ExpenseDatabase
-│   │   └── ExpenseEntity
-│   │
-│   └── repository
-│       └── ExpenseRepository
+├── data                  # Data Layer
+│   ├── local             # Room DB, DAOs, Entities
+│   └── repository        # Repository implementations
 │
-├── ui
-│   ├── main
-│   │   └── MainActivity
-│   │
-│   └── viewmodel
-│       └── ExpenseViewModel
+├── domain                # Domain Layer (Business Logic)
+│   ├── model             # Clean data models
+│   ├── repository        # Repository interfaces
+│   └── usecase           # Reusable business logic units
 │
-├── utils
+├── ui                    # UI Layer (Jetpack Compose)
+│   ├── component         # Reusable UI widgets
+│   ├── screen            # Feature-based screens (Home, Reports, etc.)
+│   ├── state             # UI state models
+│   └── theme             # M3 Color, Shape, and Typography
 │
-└── app
+├── di                    # Dependency Injection (Hilt Modules)
+│
+└── MainActivity.kt       # Single Activity Entry Point
 ```
 
 ---
@@ -95,15 +91,12 @@ SmartExpenseTrackerApp
 ## 🏗 Architecture Flow
 
 ```text
-UI (Activity/Fragment)
-        ↓
-ViewModel
-        ↓
-Repository
-        ↓
-Room Database
-        ↓
-SQLite Storage
+       [ UI Layer ]                [ Domain Layer ]             [ Data Layer ]
+  Jetpack Compose Screens  ──▶  Use Cases (Business Logic)  ──▶  Repositories
+           │                           │                          │
+           ▼                           ▼                          ▼
+       ViewModels  ◀───────────────────┴────────────────────  Room Database
+    (State Management)                                       (Local Persistence)
 ```
 
 ---
@@ -167,6 +160,43 @@ SQLite Storage
          </a>
 </p>
 
+[//]: # (### Home Screen)
+
+[//]: # (<p align="center">)
+
+[//]: # (         <a href="./screenshots/home.JPG">)
+
+[//]: # (            <img src="./screenshots/home.JPG" alt="App Screenshot" width="300">)
+
+[//]: # (         </a>)
+
+[//]: # (</p>)
+
+[//]: # ()
+[//]: # (### Add Expense Screen)
+
+[//]: # (<p align="center">)
+
+[//]: # (         <a href="./screenshots/add.JPG">)
+
+[//]: # (            <img src="./screenshots/add.JPG" alt="App Screenshot" width="300">)
+
+[//]: # (         </a>)
+
+[//]: # (</p>)
+
+[//]: # ()
+[//]: # (### Expense History Screen)
+
+[//]: # (<p align="center">)
+
+[//]: # (         <a href="./screenshots/expenses.JPG">)
+
+[//]: # (            <img src="./screenshots/expenses.JPG" alt="App Screenshot" width="300">)
+
+[//]: # (         </a>)
+
+[//]: # (</p>)
 
 ---
 
@@ -215,26 +245,22 @@ Run App
 
 ## 🎯 Future Enhancements
 
-- Expense Categories
-- Monthly Reports
-- Expense Charts
-- Export to PDF
-- Cloud Backup
-- User Authentication
-- Dark Mode
-- Budget Planning
+- **AI Spending Insights**: Predictive analysis of future spending based on history.
+- **Export to PDF/CSV**: Generate professional financial statements.
+- **Cloud Sync**: Firebase integration for cross-device data synchronization.
+- **User Authentication**: Secure login and multi-user profile support.
+- **Push Notifications**: Smart reminders for budget limits and daily logging.
+- **Biometric Lock**: Enhanced security using fingerprint or face unlock.
 
 ---
 
 ## 📈 Learning Outcomes
 
-Through this project, I gained hands-on experience with:
-
-- Android Architecture Components
-- Database Design using Room
-- State Management using ViewModel
-- Modern Kotlin Development
-- Git Workflow and Version Control
+- Implementing **Clean Architecture** to maintain a scalable codebase.
+- Mastering **Jetpack Compose** for building high-performance, reactive UIs.
+- Advanced state management using **Kotlin Flow and StateFlow**.
+- Dependency Injection with **Hilt** to improve testability.
+- local data persistence and complex queries with **Room**.
 
 ---
 

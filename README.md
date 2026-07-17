@@ -110,26 +110,63 @@ SQLite Storage
 
 ## 📸 Screenshots
 
-### Home Screen
+### Home Screen Empty
 <p align="center">
-         <a href="./screenshots/home.JPG">
-            <img src="./screenshots/home.JPG" alt="App Screenshot" width="300">
+         <a href="./screenshots/home_empty_screen.jpeg">
+            <img src="./screenshots/home_empty_screen.jpeg" alt="App Screenshot" width="300">
+         </a>
+</p>
+
+### Home Screen with Expenses
+<p align="center">
+         <a href="./screenshots/home_with_expenses_screen.jpeg">
+            <img src="./screenshots/home_with_expenses_screen.jpeg" alt="App Screenshot" width="300">
+         </a>
+</p>
+
+### Report Screen Empty
+<p align="center">
+         <a href="./screenshots/reports_empty_scrceen.jpeg">
+            <img src="./screenshots/reports_empty_scrceen.jpeg" alt="App Screenshot" width="300">
+         </a>
+</p>
+
+### Report Screen with PieChart
+<p align="center">
+         <a href="./screenshots/reports_with_pie_chart_screen.jpeg">
+            <img src="./screenshots/reports_with_pie_chart_screen.jpeg" alt="App Screenshot" width="300">
+         </a>
+</p>
+
+### Report Screen with Category Details
+<p align="center">
+         <a href="./screenshots/reports_with_category_details_screen.jpeg">
+            <img src="./screenshots/reports_with_category_details_screen.jpeg" alt="App Screenshot" width="300">
+         </a>
+</p>
+
+
+### Budget Screen Empty 
+<p align="center">
+         <a href="./screenshots/budget_empty_screen.jpeg">
+            <img src="./screenshots/budget_empty_screen.jpeg" alt="App Screenshot" width="300">
+         </a>
+</p>
+
+### Budget Screen with Budgets
+<p align="center">
+         <a href="./screenshots/budget_with_expenses_screen.jpeg">
+            <img src="./screenshots/budget_with_expenses_screen.jpeg" alt="App Screenshot" width="300">
          </a>
 </p>
 
 ### Add Expense Screen
 <p align="center">
-         <a href="./screenshots/add.JPG">
-            <img src="./screenshots/add.JPG" alt="App Screenshot" width="300">
+         <a href="./screenshots/add_expense_screen.jpeg">
+            <img src="./screenshots/add_expense_screen.jpeg" alt="App Screenshot" width="300">
          </a>
 </p>
 
-### Expense History Screen
-<p align="center">
-         <a href="./screenshots/expenses.JPG">
-            <img src="./screenshots/expenses.JPG" alt="App Screenshot" width="300">
-         </a>
-</p>
 
 ---
 
